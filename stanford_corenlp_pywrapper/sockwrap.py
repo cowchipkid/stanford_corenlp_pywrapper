@@ -141,6 +141,7 @@ class SockWrap:
     def send_command_and_parse_result(self, cmd, timeout):
         try:
             self.ensure_proc_is_running()
+            LOG.warning("---- LAM-TLR issuing command.")
             data = self.send_command_and_get_string_result(cmd, timeout)
             decoded = None
             try:
@@ -148,6 +149,8 @@ class SockWrap:
             except ValueError:
                 LOG.warning("Bad JSON returned from subprocess; returning null.")
                 return None
+            
+            LOG.warning("---- LAM-TLR done with command.")
             return decoded
         except socket.timeout, e:
             LOG.info("Socket timeout happened, returning None: %s %s" % (type(e), e))
