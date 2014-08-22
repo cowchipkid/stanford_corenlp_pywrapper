@@ -160,15 +160,18 @@ class SockWrap:
 
     def send_command_and_get_string_result(self, cmd, timeout):
         sock = self.get_socket()
-        sock.settimeout(timeout)
-        sock.sendall(cmd + "\n")
-        size_info_str = sock.recv(8)
-        # java "long" is 8 bytes, which python struct calls "long long".
-        # java default byte ordering is big-endian.
-        size_info = struct.unpack('>Q', size_info_str)[0]
-        data = sock.recv(size_info)
-        sock.shutdown(1)
-        sock.close()
+        try:
+            sock.settimeout(timeout)
+            sock.sendall(cmd + "\n")
+            size_info_str = sock.recv(8)
+            # java "long" is 8 bytes, which python struct calls "long long".
+            # java default byte ordering is big-endian.
+            size_info = struct.unpack('>Q', size_info_str)[0]
+            data = sock.recv(size_info)
+        finally:
+            sock.shutdown(1)
+            sock.close()
+            pass
         return data
 
 
