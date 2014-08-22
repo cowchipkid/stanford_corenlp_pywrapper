@@ -184,6 +184,8 @@ public class PipeCommandRunner {
 			bb.putLong(0, resultLength);
 			clientSocket.getOutputStream().write(bb.array());
 			clientSocket.getOutputStream().write(resultToReturn);
+			clientSocket.getOutputStream().flush();
+			clientSocket.close();
 		}
 //		parseServer.close();
 	}
