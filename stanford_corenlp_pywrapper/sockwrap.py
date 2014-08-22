@@ -141,7 +141,7 @@ class SockWrap:
     def send_command_and_parse_result(self, cmd, timeout):
         try:
             self.ensure_proc_is_running()
-            LOG.warning("---- LAM-TLR issuing command.")
+            LOG.info("---- LAM-TLR issuing command.")
             data = self.send_command_and_get_string_result(cmd, timeout)
             decoded = None
             try:
@@ -150,7 +150,7 @@ class SockWrap:
                 LOG.warning("Bad JSON returned from subprocess; returning null.")
                 return None
             
-            LOG.warning("---- LAM-TLR done with command.")
+            LOG.info("---- LAM-TLR done with command.")
             return decoded
         except socket.timeout, e:
             LOG.info("Socket timeout happened, returning None: %s %s" % (type(e), e))
@@ -169,7 +169,7 @@ class SockWrap:
         # java default byte ordering is big-endian.
         size_info = struct.unpack('>Q', size_info_str)[0]
         data = sock.recv(size_info)
-        sock.shutdown(0)
+        sock.shutdown(1)
         sock.close()
         return data
 
