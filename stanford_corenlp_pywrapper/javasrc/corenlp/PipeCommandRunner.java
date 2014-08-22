@@ -154,12 +154,21 @@ public class PipeCommandRunner {
 
 		while (true) {
 //			System.err.println("[Server] Waiting for Connection on Port: "+port);
+			clientSocket = null;
 			try {
 				clientSocket = getSocketConnection();
 				br = new BufferedReader(new InputStreamReader(new DataInputStream(clientSocket.getInputStream())));
 				commandstr = br.readLine();
-
 			} catch (IOException e) {
+				if (clientSocket != null) 
+					try {
+						clientSocket.close();
+					} catch (IOException failInFail) {
+						
+						// there is not much we can do here, if we fail to close the socket, it will just have to 
+						// stay open. We will report it.
+						failInFail.printStackTrace();
+					}
 				e.printStackTrace();
 				continue;
 			}
@@ -171,6 +180,14 @@ public class PipeCommandRunner {
 			try {
 				result = runCommand(command,payload);
 			} catch (Exception e) {
+				try {
+					clientSocket.close();
+				} catch (IOException failInFail) {
+					
+					// there is not much we can do here, if we fail to close the socket, it will just have to 
+					// stay open. We will report it.
+					failInFail.printStackTrace();
+				}
 				e.printStackTrace();
 				continue;
 			}

@@ -166,6 +166,8 @@ class SockWrap:
         # java default byte ordering is big-endian.
         size_info = struct.unpack('>Q', size_info_str)[0]
         data = sock.recv(size_info)
+        sock.shutdown(0)
+        sock.close()
         return data
 
 
